@@ -1,19 +1,22 @@
 #__import__('IPython').embed()
-import os, docker
+import os, shutil, docker
 C = docker.from_env()
 
-try:
-    os.mkdir('/tmp/share')
-except IOError:
-    pass
+shutil.rmtree('/tmp/share', ignore_errors=True)
+os.mkdir('/tmp/share')
+
+shutil.copyfile('./001.jpg', '/tmp/share/image.jpg')
+shutil.copyfile('./main.sh', '/tmp/share/main.sh')
 
 def wrapcmd(x):
     return f'-c "{x}"'
 
 ret = C.containers.run('algebr/openface',
-        wrapcmd('echo a > /mnt/share/a.txt'),
-        detach=True,
+        wrapcmd('bash /mnt/share/main.sh'),
         volumes={
             '/tmp/share': dict(bind='/mnt/share', mode='rw'),
-        })
-print(ret.logs().decode())
+        }, auto_remove=True)
+print(ret.decode())
+
+with open('/tmp/share/result.csv') as f:
+    print(f.read())
