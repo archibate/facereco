@@ -3,8 +3,7 @@ import csv
 import shutil
 import docker
 import tempfile
-import numpy as np
-import matplotlib.pyplot as plt
+import pickle
 
 def process_image(imgpath):
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -31,18 +30,8 @@ def process_image(imgpath):
 
 
 res, keys = process_image('233.jpg')
-
-
-
-pos = []
-for i in range(100):
-     if f'x_{i}' not in res:
-         break
-     pos.append((res[f'x_{i}'], res[f'y_{i}']))
-pos = np.array(pos)
-
-plt.scatter(pos[:, 0], pos[:, 1])
-plt.show()
+with open('/tmp/233.pkl', 'wb') as f:
+    pickle.dump(res, f)
 
 
 #__import__('IPython').embed()
