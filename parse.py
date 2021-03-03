@@ -29,7 +29,8 @@ def get_landmarks(res):
     for i in range(68):
          if f'X_{i}' not in res:
              break
-         p = (A @ [res[f'X_{i}'], res[f'Y_{i}'], res[f'Z_{i}'], 1.0])[:3]
+         p = np.array([res[f'X_{i}'], res[f'Y_{i}'], res[f'Z_{i}']])
+         p = matrix.np43(A @ matrix.np34(p))
          pos.append(p)
     assert len(pos)
     pos = np.array(pos)
@@ -37,15 +38,20 @@ def get_landmarks(res):
     bmin = np.min(pos, axis=0, keepdims=True)
     pos = (pos - bmin) / (bmax - bmin)
     return pos
+    #return pos[0:17]
+    #return pos[17:28]
+    #return pos[28:36]
+    #return pos[36:48]
+    #return pos[48:68]
 
 
 pos = [get_landmarks(f'/tmp/{x}.pkl') for x in '001 030 233 666'.split()]
-print(mse(pos[0], pos[1]))
-print(mse(pos[0], pos[2]))
-print(mse(pos[0], pos[3]))
-print(mse(pos[1], pos[2]))
-print(mse(pos[1], pos[3]))
-print(mse(pos[2], pos[3]))
+print(1, mse(pos[0], pos[1]))
+print(0, mse(pos[0], pos[2]))
+print(0, mse(pos[0], pos[3]))
+print(0, mse(pos[1], pos[2]))
+print(0, mse(pos[1], pos[3]))
+print(1, mse(pos[2], pos[3]))
 
 exit(1)
 '''

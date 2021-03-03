@@ -99,3 +99,15 @@ def eularXYZ(theta):
     R_z = np.array([[np.cos(theta[2]), -np.sin(theta[2]), 0],
         [np.sin(theta[2]), np.cos(theta[2]), 0], [0, 0, 1]])
     return affine(R_z @ R_y @ R_x, np.zeros(3))
+
+
+def np34(x, w=1):
+    return np.concatenate([x, np.full(x.shape[:-1] + (1,), w)], axis=-1)
+
+
+def np43(x):
+    return x[..., :3] / np.repeat(x[..., 3, None], 3, axis=-1)
+
+
+def npnmlz(x):
+    return x / np.linalg.norm(x, axis=-1, keepdims=True)
