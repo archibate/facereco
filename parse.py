@@ -18,6 +18,6 @@ for i, x in enumerate('001 030 233 666'.split()):
         pos = get_landmarks(pickle.load(f))
 
     ax = plt.subplot(221 + i, projection='3d')
-    ax.scatter(pos[:, 0], pos[:, 1], pos[:, 2], c='r', marker='^')
+    ax.scatter(pos[:, 0], pos[:, 2], -pos[:, 1], c='r', marker='.')
 
 plt.show()
