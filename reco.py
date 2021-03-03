@@ -6,13 +6,13 @@ shutil.rmtree('/tmp/share', ignore_errors=True)
 os.mkdir('/tmp/share')
 
 shutil.copyfile('./001.jpg', '/tmp/share/image.jpg')
-shutil.copyfile('./main.sh', '/tmp/share/main.sh')
 
 def wrapcmd(x):
     return f'-c "{x}"'
 
 ret = C.containers.run('algebr/openface',
-        wrapcmd('bash /mnt/share/main.sh'),
+        wrapcmd('build/bin/FaceLandmarkVidMulti -f /mnt/share/image.jpg'
+                ' && cp processed/image.csv /mnt/share/result.csv'),
         volumes={
             '/tmp/share': dict(bind='/mnt/share', mode='rw'),
         }, auto_remove=True)
