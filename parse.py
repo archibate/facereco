@@ -37,6 +37,7 @@ def get_landmarks(res):
     bmax = np.max(pos, axis=0, keepdims=True)
     bmin = np.min(pos, axis=0, keepdims=True)
     pos = (pos - bmin) / (bmax - bmin)
+    pos[:, 2] *= 0.5
     return pos
     #return pos[0:17]
     #return pos[17:28]
