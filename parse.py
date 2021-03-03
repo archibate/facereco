@@ -2,6 +2,7 @@ import pickle
 import matrix
 import numpy as np
 
+# https://cloud.tencent.com/developer/article/1668762
 def mse(x, y):
     return np.linalg.norm(x - y)
 
@@ -16,6 +17,12 @@ def mse(x, y):
 # 48
 # mouse
 # 68
+
+def xb(pos): return pos[0:17]
+def eb(pos): return pos[17:28]
+def no(pos): return pos[28:36]
+def ey(pos): return pos[36:48]
+def mo(pos): return pos[48:68]
 
 def get_landmarks(res):
     if isinstance(res, str):
@@ -36,12 +43,6 @@ def get_landmarks(res):
     bmax = np.max(pos, axis=0, keepdims=True)
     bmin = np.min(pos, axis=0, keepdims=True)
     pos = (pos - bmin) / (bmax - bmin)
-    pos[:, 2] *= 0.5
-    #return pos[0:17]
-    #return pos[17:28]
-    #return pos[28:36]
-    #return pos[36:48]
-    #return pos[48:68]
     return pos
 
 
