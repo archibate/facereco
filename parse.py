@@ -1,4 +1,5 @@
 import pickle
+import matrix
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -17,10 +18,13 @@ import matplotlib.pyplot as plt
 
 def get_landmarks(res):
     pos = []
+    A = matrix.translate([res['pose_Tx'], res['pose_Ty'], res['pose_Tz']]) @ matrix.eularXYZ([res['pose_Rx'], res['pose_Ry'], res['pose_Rz']])
+    A = np.linalg.inv(A)
     for i in range(68):
          if f'X_{i}' not in res:
              break
-         pos.append((res[f'X_{i}'], res[f'Y_{i}'], res[f'Z_{i}']))
+         p = (A @ [res[f'X_{i}'], res[f'Y_{i}'], res[f'Z_{i}'], 1.0])[:3]
+         pos.append(p)
     assert len(pos)
     return np.array(pos)
 
