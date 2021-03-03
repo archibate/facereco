@@ -1,7 +1,6 @@
 import pickle
 import matrix
 import numpy as np
-import matplotlib.pyplot as plt
 
 def mse(x, y):
     return np.linalg.norm(x - y)
@@ -38,28 +37,30 @@ def get_landmarks(res):
     bmin = np.min(pos, axis=0, keepdims=True)
     pos = (pos - bmin) / (bmax - bmin)
     pos[:, 2] *= 0.5
-    return pos
     #return pos[0:17]
     #return pos[17:28]
     #return pos[28:36]
     #return pos[36:48]
     #return pos[48:68]
+    return pos
 
 
-pos = [get_landmarks(f'/tmp/{x}.pkl') for x in '001 030 233 666'.split()]
-print(1, mse(pos[0], pos[1]))
-print(0, mse(pos[0], pos[2]))
-print(0, mse(pos[0], pos[3]))
-print(0, mse(pos[1], pos[2]))
-print(0, mse(pos[1], pos[3]))
-print(1, mse(pos[2], pos[3]))
+if __name__ == '__main__':
+    pos = [get_landmarks(f'/tmp/{x}.pkl') for x in '001 030 233 666'.split()]
+    print(1, mse(pos[0], pos[1]))
+    print(0, mse(pos[0], pos[2]))
+    print(0, mse(pos[0], pos[3]))
+    print(0, mse(pos[1], pos[2]))
+    print(0, mse(pos[1], pos[3]))
+    print(1, mse(pos[2], pos[3]))
 
-exit(1)
-'''
-for i, x in enumerate('001 030 233 666'.split()):
-    pos = get_landmarks(f'/tmp/{x}.pkl')
-    ax = plt.subplot(221 + i, projection='3d')
-    ax.scatter(pos[:, 0], pos[:, 2], -pos[:, 1], c='r', marker='.')
+    exit(1)
+    '''
+    import matplotlib.pyplot as plt
+    for i, x in enumerate('001 030 233 666'.split()):
+        pos = get_landmarks(f'/tmp/{x}.pkl')
+        ax = plt.subplot(221 + i, projection='3d')
+        ax.scatter(pos[:, 0], pos[:, 2], -pos[:, 1], c='r', marker='.')
 
-plt.show()
-'''
+    plt.show()
+    '''

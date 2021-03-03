@@ -29,7 +29,8 @@ def process_image(imgpath):
     return res, keys
 
 
-for x in '001 030 233 666'.split():
-    res, keys = process_image(f'{x}.jpg')
-    with open(f'/tmp/{x}.pkl', 'wb') as f:
-        pickle.dump(res, f)
+if __name__ == '__main__':
+    for x in '001 030 233 666'.split():
+        res, keys = process_image(f'{x}.jpg')
+        with open(f'/tmp/{x}.pkl', 'wb') as f:
+            pickle.dump(res, f)
