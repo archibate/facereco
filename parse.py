@@ -3,9 +3,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+# 0
+# xiaba
+# 17
+# eyebrow
+# 28
+# nose
+# 36
+# eyes
+# 48
+# mouse
+# 68
+
 def get_landmarks(res):
     pos = []
-    for i in range(100):
+    for i in range(68):
          if f'X_{i}' not in res:
              break
          pos.append((res[f'X_{i}'], res[f'Y_{i}'], res[f'Z_{i}']))
