@@ -1,5 +1,5 @@
 #__import__('IPython').embed()
-import os, shutil, docker
+import os, shutil, docker, csv
 C = docker.from_env()
 
 shutil.rmtree('/tmp/share', ignore_errors=True)
@@ -19,4 +19,7 @@ ret = C.containers.run('algebr/openface',
 print(ret.decode())
 
 with open('/tmp/share/result.csv') as f:
-    print(f.read())
+    rows = [[x.strip() for x in row] for row in csv.reader(f)]
+    assert len(rows) == 2
+    res = dict((k, float(v)) for k, v in zip(*rows))
+    print(res)
