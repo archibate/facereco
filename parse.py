@@ -26,7 +26,11 @@ def get_landmarks(res):
          p = (A @ [res[f'X_{i}'], res[f'Y_{i}'], res[f'Z_{i}'], 1.0])[:3]
          pos.append(p)
     assert len(pos)
-    return np.array(pos)
+    pos = np.array(pos)
+    bmax = np.max(pos, axis=0, keepdims=True)
+    bmin = np.min(pos, axis=0, keepdims=True)
+    pos = (pos - bmin) / (bmax - bmin)
+    return pos
 
 
 for i, x in enumerate('001 030 233 666'.split()):
