@@ -3,6 +3,8 @@ import matrix
 import numpy as np
 import matplotlib.pyplot as plt
 
+def mse(x, y):
+    return np.linalg.norm(x - y)
 
 # 0
 # xiaba
@@ -17,6 +19,10 @@ import matplotlib.pyplot as plt
 # 68
 
 def get_landmarks(res):
+    if isinstance(res, str):
+        with open(res, 'rb') as f:
+            res = pickle.load(f)
+
     pos = []
     A = matrix.translate([res['pose_Tx'], res['pose_Ty'], res['pose_Tz']]) @ matrix.eularXYZ([res['pose_Rx'], res['pose_Ry'], res['pose_Rz']])
     A = np.linalg.inv(A)
@@ -33,11 +39,20 @@ def get_landmarks(res):
     return pos
 
 
-for i, x in enumerate('001 030 233 666'.split()):
-    with open(f'/tmp/{x}.pkl', 'rb') as f:
-        pos = get_landmarks(pickle.load(f))
+pos = [get_landmarks(f'/tmp/{x}.pkl') for x in '001 030 233 666'.split()]
+print(mse(pos[0], pos[1]))
+print(mse(pos[0], pos[2]))
+print(mse(pos[0], pos[3]))
+print(mse(pos[1], pos[2]))
+print(mse(pos[1], pos[3]))
+print(mse(pos[2], pos[3]))
 
+exit(1)
+'''
+for i, x in enumerate('001 030 233 666'.split()):
+    pos = get_landmarks(f'/tmp/{x}.pkl')
     ax = plt.subplot(221 + i, projection='3d')
     ax.scatter(pos[:, 0], pos[:, 2], -pos[:, 1], c='r', marker='.')
 
 plt.show()
+'''
