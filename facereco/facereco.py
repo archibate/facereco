@@ -37,12 +37,11 @@ class FaceDetector:
                 return True
         return False
 
-    def train(self, paths):
+    def train(self, images):
         self.data = []
-        paths = list(paths)
-        for i, path in enumerate(paths):
-            print('training {}/{}: {}'.format(i + 1, len(paths), path))
-            img = cv2.imread(path)
+        images = list(images)
+        for i, img in enumerate(images):
+            print('training {}/{}...'.format(i + 1, len(images)))
             encodings = self.encode(img)
             self.data.extend(encodings)
         return self.data
@@ -50,5 +49,5 @@ class FaceDetector:
 
 if __name__ == '__main__':
     dec = FaceDetector()
-    dec.train(imutils.paths.list_images('dataset/linus/'))
+    dec.train(map(cv2.imread, imutils.paths.list_images('dataset/linus/')))
     print(dec.detect(cv2.imread('images/linus.jpg')))
