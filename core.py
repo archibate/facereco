@@ -5,17 +5,27 @@ import numpy as np
 import os.path
 import pickle
 import time
-import sys
 
 class FaceDetector:
     def __init__(self, data):
         self.data = list(data)
 
     @classmethod
-    def from_dataset(cls, path):
+    def train_from_dataset(cls, path):
         self = cls([])
         self._train_dataset(path)
         return self
+
+    @classmethod
+    def from_trained_model(cls, path):
+        with open(path, 'rb') as f:
+            data = pickle.load(f)
+        self = cls(data)
+        return self
+
+    def save_trained_model(self, path):
+        with open(path, 'wb') as f:
+            pickle.dump(self.data, f)
 
     @staticmethod
     def _detect_faces(img):
@@ -79,10 +89,3 @@ class FaceDetector:
         boxes, encodings = self._detect_faces(img)
         names = self._match_faces(encodings)
         self._draw_labels(img, boxes, names)
-
-if __name__ == '__main__':
-    dec = FaceDetector.from_dataset('dataset')
-    img = cv2.imread('nvidia.jpg')
-    dec.draw_boxes_in_pic(img)
-    cv2.imshow('face', img)
-    cv2.waitKey(0)
