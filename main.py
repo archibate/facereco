@@ -6,6 +6,10 @@ import os.path
 import pickle
 import time
 
+'''
+pip3 install opencv-python face_recognition imutils numpy dlib
+'''
+
 class FaceDetector:
     def __init__(self, data=(), shift=0):
         self.data = list(data)
