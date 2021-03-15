@@ -7,30 +7,38 @@ import pickle
 import time
 
 class FaceDetector:
-    def __init__(self, data):
+    def __init__(self, data, shift=0):
         self.data = list(data)
+        self.shift = shift
 
     @classmethod
-    def train_from_dataset(cls, path):
-        self = cls([])
+    def train_from_dataset(cls, path, shift=0):
+        self = cls([], shift)
         self._train_dataset(path)
         return self
 
     @classmethod
-    def from_trained_model(cls, path):
+    def from_trained_model(cls, path, shift=0):
         with open(path, 'rb') as f:
             data = pickle.load(f)
-        self = cls(data)
+        self = cls(data, shift)
         return self
 
     def save_trained_model(self, path):
         with open(path, 'wb') as f:
             pickle.dump(self.data, f)
 
-    @staticmethod
-    def _detect_faces(img):
-        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        boxes = face_recognition.face_locations(rgb)
+    def _detect_faces(self, img):
+        rgb_down = rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        for i in range(self.shift):
+            rgb_down = cv2.pyrDown(rgb_down)
+        boxes = list(face_recognition.face_locations(rgb_down))
+        for i, (top, right, bottom, left) in enumerate(boxes):
+            top <<= self.shift
+            right <<= self.shift
+            bottom <<= self.shift
+            left <<= self.shift
+            boxes[i] = top, right, bottom, left
         encodings = face_recognition.face_encodings(rgb, boxes)
         return boxes, encodings
 
@@ -55,8 +63,7 @@ class FaceDetector:
             names.append(name)
         return names
 
-    @staticmethod
-    def _draw_labels(img, boxes, names):
+    def _draw_labels(self, img, boxes, names):
         for (top, right, bottom, left), name in zip(boxes, names):
             cv2.putText(img, name, (left, top - 15 if top > 30 else top + 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)

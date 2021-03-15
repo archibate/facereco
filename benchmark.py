@@ -17,6 +17,6 @@ def benchmark(func, times=20, warmup=2):
     dt = (t1 - t0) / times
     print('average', dt)
 
-dec = FaceDetector.from_trained_model('model.pickle')
-img = cv2.imread('testdata/nvidia.jpg')
-benchmark(lambda: dec.is_name_in_pic('nvidia', img))
+dec = FaceDetector.from_trained_model('model.pickle', shift=0)
+img = cv2.imread('images/nvidia.jpg')
+benchmark(lambda: dec._detect_faces(img))
