@@ -3,6 +3,7 @@ import face_recognition
 import numpy as np
 import pickle
 import time
+import sys
 
 with open('model.pickle', 'rb') as f:
     data = pickle.load(f)
@@ -18,7 +19,7 @@ def match_faces(encodings, filters=None):
     data_names = []
     data_encodings = []
     for name, encoding in data:
-        if filters is None or name in filters:
+        if not filters or name in filters:
             data_names.append(name)
             data_encodings.append(encoding)
     for encoding in encodings:
@@ -40,11 +41,12 @@ def draw_labels(img, boxes, names):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
         cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
 
-t0 = time.time()
-img = cv2.imread('nvidia.jpg')
-boxes, encodings = detect_faces(img)
-names = match_faces(encodings)
-draw_labels(img, boxes, names)
-print(time.time() - t0)
-cv2.imshow('face', img)
-cv2.waitKey(0)
+if __name__ == '__main__':
+    t0 = time.time()
+    img = cv2.imread(sys.argv[1])
+    boxes, encodings = detect_faces(img)
+    names = match_faces(encodings, sys.argv[2:])
+    draw_labels(img, boxes, names)
+    print('cost time: {:.2f}s'.format(time.time() - t0))
+    cv2.imshow('face', img)
+    cv2.waitKey(0)
