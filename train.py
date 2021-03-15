@@ -32,7 +32,7 @@ def draw_labels(img, boxes, names):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
         cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
 
-data = {'encodings': [], 'names': []}
+data = []
 
 imagePaths = list(imutils.paths.list_images('dataset'))
 for i, imagePath in enumerate(imagePaths):
@@ -41,8 +41,7 @@ for i, imagePath in enumerate(imagePaths):
     img = cv2.imread(imagePath)
     boxes, encodings = detect_faces(img)
     for encoding in encodings:
-        data['encodings'].append(encoding)
-        data['names'].append(name)
+        data.append((name, encoding))
 
-with open('train.pickle', 'wb') as f:
+with open('model.pickle', 'wb') as f:
     pickle.dump(data, f)
