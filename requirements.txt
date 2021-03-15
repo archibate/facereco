@@ -1,5 +1,6 @@
 opencv-python
 face_recognition
 imutils
+joblib
 numpy
 dlib
