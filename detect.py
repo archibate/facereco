@@ -2,8 +2,7 @@ import cv2
 import face_recognition
 import numpy as np
 
-img = cv2.imread('dataset/europian/001.jpg')
-#img = cv2.imread('dataset/doubles/233.jpg')
+img = cv2.imread('example.jpg')
 rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 boxes = face_recognition.face_locations(rgb)
