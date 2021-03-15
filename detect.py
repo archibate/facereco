@@ -2,17 +2,77 @@ import cv2
 import face_recognition
 import numpy as np
 
+data = {
+        'encodings': [
+np.array(
+[-1.54902086e-01, 7.40660205e-02, 3.61095555e-02, 2.35255789e-02,
+ -6.18788507e-03,-2.65342109e-02,-5.78469299e-02,-6.96854591e-02,
+  1.09950326e-01,-7.95709938e-02, 2.11413786e-01,-7.11100176e-02,
+ -2.08714858e-01,-2.28814874e-02,-4.76458892e-02, 6.51885867e-02,
+ -1.51632071e-01,-1.36782125e-01,-3.87494043e-02,-2.02609953e-02,
+  9.60931927e-02,-2.65311841e-02, 8.48600920e-03, 5.95420748e-02,
+ -2.34950304e-01,-2.68143177e-01,-1.10335417e-01,-1.28722832e-01,
+  3.22095007e-02,-1.50022149e-01,-7.00023919e-02,-1.08256765e-01,
+ -1.92729354e-01,-3.02212629e-02, 1.98924877e-02, 8.59620199e-02,
+ -5.63261360e-02,-7.98965394e-02, 2.13892072e-01,-1.86041445e-02,
+ -1.12956069e-01,-1.37604261e-02, 6.18410371e-02, 3.09217215e-01,
+  1.68744639e-01, 6.95925876e-02,-2.58451197e-02,-4.69809324e-02,
+  9.92750525e-02,-2.95071006e-01, 1.26225591e-01, 1.39024958e-01,
+  1.31187841e-01, 1.51488036e-01, 1.17802970e-01,-1.37343138e-01,
+  2.68925242e-02, 1.10527836e-01,-1.66787982e-01, 1.14631504e-01,
+ -1.68962553e-02, 6.39518052e-02, 6.08723648e-02,-1.73609331e-02,
+  2.18881488e-01, 9.98050496e-02,-1.33904994e-01,-7.42452890e-02,
+  9.63535160e-02,-1.86850175e-01,-2.33886465e-02, 6.12917803e-02,
+ -5.76532073e-02,-2.85854101e-01,-2.22553506e-01, 6.61882013e-02,
+  4.25025374e-01, 2.31284723e-01,-2.02758238e-01, 6.36341497e-02,
+ -3.04392818e-02,-1.30109355e-01, 8.88473168e-02, 6.61007762e-02,
+ -5.36410399e-02, 8.31606165e-02,-7.91317895e-02, 8.68750066e-02,
+  2.35410988e-01,-2.85815224e-02,-3.13772485e-02, 2.00960532e-01,
+ -4.93398914e-03, 2.98332106e-05, 7.33797848e-02, 1.90358926e-02,
+ -1.03926063e-01, 6.55789953e-03,-1.12352014e-01,-7.21212057e-03,
+  2.67902017e-02,-3.62434201e-02,-9.03056376e-03, 7.33767152e-02,
+ -1.38961211e-01, 1.53893366e-01, 4.57452610e-02,-9.15104151e-02,
+ -8.30439553e-02, 4.58637513e-02,-1.66189149e-01,-1.89997647e-02,
+  1.09888308e-01,-3.28068405e-01, 2.01453209e-01, 1.54709920e-01,
+  3.76855955e-02, 1.62661150e-01, 4.17151377e-02, 2.09231563e-02,
+  9.85647738e-02, 5.18372133e-02,-8.18762332e-02,-8.79599005e-02,
+  2.48493142e-02, 7.56749092e-03, 9.61217806e-02, 1.94872487e-02])
+],
+        'names': ['europian'],
+}
+
+def detect_faces(img):
+    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    boxes = face_recognition.face_locations(rgb)
+    encodings = face_recognition.face_encodings(rgb, boxes)
+    return boxes, encodings
+
+def match_faces(encodings):
+    names = []
+    for encoding in encodings:
+        matches = face_recognition.compare_faces(data['encodings'], encoding)
+        name = 'Unknown'
+        if any(matches):
+            indices = [i for (i, b) in enumerate(matches) if b]
+            counts = {}
+            for i in indices:
+                name = data['names'][i]
+                counts[name] = counts.get(name, 0) + 1
+            name = max(counts, key=counts.get)
+        names.append(name)
+    return names
+
+def draw_labels(img, boxes, names):
+    for (top, right, bottom, left), name in zip(boxes, names):
+        cv2.putText(img, name, (left, top - 15 if top > 30 else top + 15),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
+        cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+
 img = cv2.imread('example.jpg')
-rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-boxes = face_recognition.face_locations(rgb)
-encodings = face_recognition.face_encodings(rgb, boxes)
-
-for top, right, bottom, left in boxes:
-    name = 'europian'
-    cv2.putText(img, name, (left, top - 15 if top > 30 else top + 15),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
-    cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
-
+boxes, encodings = detect_faces(img)
+names = match_faces(encodings)
+draw_labels(img, boxes, names)
 cv2.imshow('face', img)
 cv2.waitKey(0)
+
+
