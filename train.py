@@ -1,10 +1,9 @@
 import cv2
 import face_recognition
+import imutils.paths
 import numpy as np
+import os.path
 import pickle
-
-with open('train.pickle', 'rb') as f:
-    data = pickle.load(f)
 
 def detect_faces(img):
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -33,11 +32,17 @@ def draw_labels(img, boxes, names):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
         cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
 
-img = cv2.imread('example.jpg')
-boxes, encodings = detect_faces(img)
-names = match_faces(encodings)
-draw_labels(img, boxes, names)
-cv2.imshow('face', img)
-cv2.waitKey(0)
+data = {'encodings': [], 'names': []}
 
+imagePaths = list(imutils.paths.list_images('dataset'))
+for i, imagePath in enumerate(imagePaths):
+    print(f'processing {i}/{len(imagePaths)}...')
+    name = imagePath.split(os.path.sep)[-2]
+    img = cv2.imread(imagePath)
+    boxes, encodings = detect_faces(img)
+    for encoding in encodings:
+        data['encodings'].append(encoding)
+        data['names'].append(name)
 
+with open('train.pickle', 'wb') as f:
+    pickle.dump(data, f)
